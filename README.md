@@ -4,7 +4,7 @@
 
 **注**：cesium-unreal 和 cesium-unity分别是 cesium for ue 和 cesium for unity两个插件的官方源码
 
-## 🚀 特性
+## 1. 特性
 
 - 目前支持：
   - HTTP协议的 3D Tiles 1.0 / 1.1模型加载和渲染
@@ -17,22 +17,9 @@
   - 基于 WGS84 的精确地理投影
   - 支持 WMTS 影像服务数据的加载和渲染
 
----
+## 2. 入门
 
-### 1. 前提条件
-
-- [CMake](https://cmake.org/) >= 3.20
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) 或更高版本
-- [vcpkg](https://vcpkg.io/)（推荐用于依赖管理）
-- 已安装 OpenSceneGraph 开发库（可通过 vcpkg 安装：`vcpkg install openscenegraph`）
-
-### 1.1 克隆项目（含子模块）
-
-```powershell
-git clone --recurse-submodules https://github.com/xrui94/cesium-osg.git
-```
-
-## 1. 前提条件
+### 2.1 前提条件
 
 开发环境需要如下依赖，须要事先准备好（目前仅支持 Windows）：
 
@@ -41,11 +28,9 @@ git clone --recurse-submodules https://github.com/xrui94/cesium-osg.git
 - [OSG-version3.6.5]
 - [libcurl]
 
-须将 OSG 和 libcurl 两个编译好的库放大1个目录下，然后，在CMake生成C++项目时，指定改路径
+须将 OSG （OpenSceneGraph）和 libcurl 两个编译好的库放大1个目录下，然后，在CMake生成C++项目时，指定改路径
 
-## 2. 入门
-
-### 2.1 克隆镜像
+### 2.2 克隆仓库（含子模块）
 
 使用如下命令，克隆 cesium-osg 项目及其子项目模块
 
@@ -59,7 +44,7 @@ git clone --recurse-submodules https://github.com/xrui94/cesium-osg.git
 git submodule update --init --recursive
 ```
 
-### 🛠 2.2 编译和构建
+### 🛠 2.3 编译和构建
 
 ```ps
 mkdir build
@@ -68,7 +53,7 @@ cmake .. -G"Visual Studio 17 2022" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREF
 cmake --build . --config Debug
 ```
 
-## 致谢
+## 3. 致谢
 
 cesium-osg项目收到了如下三个项目的启发：
 - [osgEarth](https://github.com/gwaldron/osgearth): 3D Maps & Terrain SDK / C++17
