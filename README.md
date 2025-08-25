@@ -1,10 +1,10 @@
 # cesium-osg
 
-将 Cesium 特有的 3D 地理空间技术，尤其是3DTiles 带到 OSG（OpenSceneGraph），有点类似 [cesium-unreal](https://github.com/CesiumGS/cesium-unreal) 和 [cesium-unity](https://github.com/CesiumGS/cesium-unreal)两个项目。
+该项目基于 [cesium-native](https://github.com/CesiumGS/cesium-native) 开源项目，实现了将 Cesium 特有的一些 3D 地理空间技术，尤其是 3DTiles 带到了 OSG（OpenSceneGraph）的运用场景中。这有点类似 [osgEarth](https://github.com/gwaldron/osgearth)、[cesium-unreal](https://github.com/CesiumGS/cesium-unreal) 和 [cesium-unity](https://github.com/CesiumGS/cesium-unreal)三个开源项目。
 
 **注**：cesium-unreal 和 cesium-unity分别是 cesium for ue 和 cesium for unity两个插件的官方源码
 
-## 1. 特性
+## 1. 特性和
 
 - 目前支持：
   - HTTP协议的 3D Tiles 1.0 / 1.1模型加载和渲染
@@ -24,11 +24,12 @@
 开发环境需要如下依赖，须要事先准备好（目前仅支持 Windows）：
 
 - [CMake](https://cmake.org/) >= 3.20
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) 或更高版本
-- [OSG-version3.6.5]
-- [libcurl]
+- [vcpkg](https://learn.microsoft.com/zh-cn/vcpkg/get_started/get-started)
+- [Visual Studio 2022](https://visualstudio.microsoft.com/)
+- [OSG-version3.6.5](www.openscenegraph.org)
+- [libcurl](https://curl.se/libcurl/)
 
-须将 OSG （OpenSceneGraph）和 libcurl 两个编译好的库放大1个目录下，然后，在CMake生成C++项目时，指定改路径
+**注**：你可以从这个网站：[https://objexx.com/OpenSceneGraph.html](https://objexx.com/OpenSceneGraph.html) 直接下载编译好的 OSG 库，也可以自己从头编译。须将 OSG （OpenSceneGraph）和 libcurl 两个编译好的库放大1个目录下，然后，在CMake生成C++项目时，通过“**-DTHIRD_PARTY_DIR**”参数指定该路径。你也可以完全使用vcpkg 来作为三方库的提供者，此时，“**-DTHIRD_PARTY_DIR**”应该等于vcpkg的安装的根目录“VCPKG_ROOT”.
 
 ### 2.2 克隆仓库（含子模块）
 
