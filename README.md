@@ -2,11 +2,11 @@
 
 该项目基于 [cesium-native](https://github.com/CesiumGS/cesium-native) 开源项目，实现了将 Cesium 特有的一些 3D 地理空间技术，尤其是 3DTiles 带到了 OSG（OpenSceneGraph）的运用场景中。这有点类似 [osgEarth](https://github.com/gwaldron/osgearth)、[cesium-unreal](https://github.com/CesiumGS/cesium-unreal) 和 [cesium-unity](https://github.com/CesiumGS/cesium-unreal)三个开源项目。
 
-**注**：cesium-unreal 和 cesium-unity分别是 cesium for ue 和 cesium for unity两个插件的官方源码
+**注**：cesium-unreal 和 cesium-unity 分别是 cesium for ue 和 cesium for unity两个插件的官方源码
 
 ![test_01.png](./screenshot/test_01.png)
 
-## 1. 特性和
+## 1. 特性
 
 - 目前支持：
   - HTTP协议的 3D Tiles 1.0 / 1.1模型加载和渲染
