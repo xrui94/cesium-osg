@@ -1,6 +1,6 @@
 #include "AsyncTaskProcessor.h"
+#include "Log.h"
 
-#include <iostream>
 #include <exception>
 
 
@@ -23,10 +23,10 @@ void AsyncTaskProcessor::startTask(std::function<void()> f)
 			f();
 		}
 		catch (const std::exception& e) {
-			std::cerr << "Synchronous task execution failed: " << e.what() << std::endl;
+			CO_CRITICAL("Synchronous task execution failed: {}", e.what());
 		}
 		catch (...) {
-			std::cerr << "Synchronous task execution failed with unknown exception" << std::endl;
+			CO_CRITICAL("Synchronous task execution failed with unknown exception");
 		}
 	}
 	else {
@@ -86,10 +86,10 @@ void AsyncTaskProcessor::workerThreadFunction()
 				task();
 			}
 			catch (const std::exception& e) {
-				std::cerr << "Asynchronous task execution failed: " << e.what() << std::endl;
+				CO_CRITICAL("Asynchronous task execution failed: {}", e.what());
 			}
 			catch (...) {
-				std::cerr << "Asynchronous task execution failed with unknown exception" << std::endl;
+				CO_CRITICAL("Asynchronous task execution failed with unknown exception");
 			}
 		}
 	}

@@ -29,7 +29,9 @@ public:
     Cesium3DTileset(const std::string& url, float maximumScreenSpaceError = 16.0f);
     Cesium3DTileset(unsigned int assetID, const std::string& server = "", const std::string& token = "", float maximumScreenSpaceError = 16.0f);
     virtual ~Cesium3DTileset();
-    
+
+public:
+
     // 重写 traverse 方法来处理瓦片集更新和渲染
     virtual void traverse(osg::NodeVisitor& nv) override;
     
@@ -46,17 +48,24 @@ public:
     
     // 检查根瓦片是否可用
     bool isRootTileAvailable() const;
+
+    // 检查是否加载成功
+    bool isLoaded() const;
     
 private:
-    void* m_tileset; // 指向 Cesium3DTilesSelection::Tileset 的指针
-    
+	// 初始化瓦片集的私有方法
+    void initializeTileset(const std::string& url, float maximumScreenSpaceError);
+    void initializeTileset(unsigned int assetID, const std::string& server, const std::string& token, float maximumScreenSpaceError);
+
+private:
+    void* m_tileset = nullptr; // 指向 Cesium3DTilesSelection::Tileset 的指针
+    bool m_tilesetSuccess = false;
+    bool m_tilesetFailed = false;
+	bool m_waitingLogged = false;
+
     std::shared_ptr<AsyncTaskProcessor> m_taskProcessor ;
     std::shared_ptr<CesiumAsync::AsyncSystem> m_asyncSystem;
     std::shared_ptr<SimpleAssetAccessor> m_assetAccessor;
     std::shared_ptr<SimpleRenderResourcesPreparer> m_prepareRenderResources;
     std::shared_ptr<CesiumUtility::CreditSystem> m_creditSystem;
-
-    // 初始化方法
-    void initializeTileset(const std::string& url, float maximumScreenSpaceError);
-    void initializeTileset(unsigned int assetID, const std::string& server, const std::string& token, float maximumScreenSpaceError);
 };

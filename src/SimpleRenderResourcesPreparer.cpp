@@ -1,4 +1,6 @@
 #include "SimpleRenderResourcesPreparer.h"
+#include "Log.h"
+
 #include <CesiumGltfContent/GltfUtilities.h>
 #include <CesiumGltf/AccessorView.h>
 
@@ -11,7 +13,6 @@
 #include <osg/StateAttribute>
 
 #include <glm/gtc/type_ptr.hpp>
-#include <iostream>
 
 
 //static bool startsWith(const std::string& str, const std::string& prefix)
@@ -216,7 +217,7 @@ namespace {
 		osg::Node* createMesh(const CesiumGltf::Mesh& mesh) {
 			osg::Group* group = new osg::Group;
 
-			std::cout << "Creating mesh with " << mesh.primitives.size() << " primitives" << std::endl;
+			CO_TRACE("Creating mesh with {} primitives", mesh.primitives.size());
 
 			for (const auto& primitive : mesh.primitives) {
 				osg::Geometry* geometry = new osg::Geometry;
@@ -306,8 +307,7 @@ namespace {
 				// 检查primitive是否有材质
 				if (primitive.material >= 0 && primitive.material < _model->materials.size()) {
 					const auto& material = _model->materials[primitive.material];
-					std::cout << "Processing material " << primitive.material << std::endl;
-
+					CO_TRACE("Processing material {}", primitive.material);
 					// 处理PBR材质
 					if (material.pbrMetallicRoughness) {
 						const auto& pbr = *material.pbrMetallicRoughness;
@@ -320,7 +320,7 @@ namespace {
 								pbr.baseColorFactor[2],
 								pbr.baseColorFactor[3]
 							);
-							std::cout << "Base color: (" << baseColor.r() << ", " << baseColor.g() << ", " << baseColor.b() << ", " << baseColor.a() << ")" << std::endl;
+							CO_TRACE("Base color: ({}, {}, {}, {})", baseColor.r(), baseColor.g(), baseColor.b(), baseColor.a());
 
 							osg::Material* osgMaterial = new osg::Material;
 							osgMaterial->setDiffuse(osg::Material::FRONT_AND_BACK, baseColor);
@@ -331,7 +331,7 @@ namespace {
 						// 处理基础颜色纹理
 						if (pbr.baseColorTexture && pbr.baseColorTexture->index >= 0 && pbr.baseColorTexture->index < _model->textures.size()) {
 							const auto& texture = _model->textures[pbr.baseColorTexture->index];
-							std::cout << "Loading base color texture " << pbr.baseColorTexture->index << std::endl;
+							CO_TRACE("Loading base color texture {}", pbr.baseColorTexture->index);
 
 							if (texture.source >= 0 && texture.source < _model->images.size()) {
 								const auto& image = _model->images[texture.source];
@@ -339,7 +339,7 @@ namespace {
 								// 检查图像资产是否存在
 								if (image.pAsset && !image.pAsset->pixelData.empty()) {
 									const auto& imageAsset = *image.pAsset;
-									std::cout << "Image source " << texture.source << ", data size: " << imageAsset.pixelData.size() << std::endl;
+									CO_TRACE("Image source {} , data size: {}", texture.source, imageAsset.pixelData.size());
 
 									osg::Texture2D* osgTexture = new osg::Texture2D;
 
@@ -359,8 +359,7 @@ namespace {
 										pixelFormat = GL_RGB;
 										internalFormat = GL_RGB8;
 									}
-
-									std::cout << "Image format: " << imageAsset.width << "x" << imageAsset.height << ", channels: " << imageAsset.channels << std::endl;
+									CO_TRACE("Image format: {}x{}, channels: {}", imageAsset.width, imageAsset.height, imageAsset.channels);
 
 									// 复制像素数据
 									unsigned char* imageData = new unsigned char[imageAsset.pixelData.size()];
@@ -384,14 +383,14 @@ namespace {
 									osgTexture->setFilter(osg::Texture2D::MAG_FILTER, osg::Texture2D::LINEAR);
 
 									stateSet->setTextureAttributeAndModes(0, osgTexture, osg::StateAttribute::ON);
-									std::cout << "Texture applied successfully" << std::endl;
+									CO_TRACE("Texture applied successfully");
 								}
 							}
 						}
 					}
 				}
 				else {
-					std::cout << "No material found for primitive, using default white material" << std::endl;
+					CO_WARN("No material found for primitive, using default white material");
 					// 设置默认白色材质
 					osg::Material* defaultMaterial = new osg::Material;
 					defaultMaterial->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
@@ -423,12 +422,12 @@ CesiumAsync::Future<Cesium3DTilesSelection::TileLoadResultAndRenderResources>
 		const std::any& rendererOptions)
 {
 
-	std::cout << "Preparing render resources in load thread" << std::endl;
-	std::cout << "TileLoadResult state: " << static_cast<int>(tileLoadResult.state) << std::endl;
+	CO_DEBUG("Preparing render resources in load thread");
+	CO_DEBUG("TileLoadResult state: {}", static_cast<int>(tileLoadResult.state));
 
 	// 检查加载状态
 	if (tileLoadResult.state != Cesium3DTilesSelection::TileLoadResultState::Success) {
-		std::cout << "Tile load failed, state: " << static_cast<int>(tileLoadResult.state) << std::endl;
+		CO_ERROR("Tile load failed, state: {}", static_cast<int>(tileLoadResult.state));
 		return asyncSystem.createResolvedFuture(
 			Cesium3DTilesSelection::TileLoadResultAndRenderResources{
 				std::move(tileLoadResult),
@@ -438,7 +437,7 @@ CesiumAsync::Future<Cesium3DTilesSelection::TileLoadResultAndRenderResources>
 
 	CesiumGltf::Model* model = std::get_if<CesiumGltf::Model>(&tileLoadResult.contentKind);
 	if (!model) {
-		std::cout << "No glTF model found in tile content, contentKind index: " << tileLoadResult.contentKind.index() << std::endl;
+		CO_ERROR("No glTF model found in tile content, contentKind index: {}", tileLoadResult.contentKind.index());
 		return asyncSystem.createResolvedFuture(
 			Cesium3DTilesSelection::TileLoadResultAndRenderResources{
 				std::move(tileLoadResult),
@@ -446,14 +445,14 @@ CesiumAsync::Future<Cesium3DTilesSelection::TileLoadResultAndRenderResources>
 			});
 	}
 
-	std::cout << "Found glTF model with " << model->meshes.size() << " meshes" << std::endl;
+	CO_TRACE("Found glTF model with {} meshes", model->meshes.size());
 
 	NodeBuilder builder(model, transform);
 	::LoadThreadResult* result = new ::LoadThreadResult;
 	result->node = builder.build();
 
 	if (!result->node.valid()) {
-		std::cout << "Failed to build OSG node from glTF model" << std::endl;
+		CO_ERROR("Failed to build OSG node from glTF model");
 		delete result;
 		return asyncSystem.createResolvedFuture(
 			Cesium3DTilesSelection::TileLoadResultAndRenderResources{
@@ -461,8 +460,7 @@ CesiumAsync::Future<Cesium3DTilesSelection::TileLoadResultAndRenderResources>
 				nullptr
 			});
 	}
-
-	std::cout << "Successfully built OSG node" << std::endl;
+	CO_DEBUG("Successfully built OSG node");
 
 	return asyncSystem.createResolvedFuture(
 		Cesium3DTilesSelection::TileLoadResultAndRenderResources{
@@ -476,7 +474,7 @@ void* SimpleRenderResourcesPreparer::prepareInMainThread(
 	void* pLoadThreadResult)
 {
 
-	std::cout << "Preparing render resources in main thread" << std::endl;
+	CO_DEBUG("Preparing render resources in main thread");
 
 	::LoadThreadResult* loadThreadResult = reinterpret_cast<::LoadThreadResult*>(pLoadThreadResult);
 	::MainThreadResult* mainThreadResult = new ::MainThreadResult();

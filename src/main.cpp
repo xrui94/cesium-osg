@@ -1,3 +1,4 @@
+#include "Log.h"
 #include "Cesium3DTileset.h"
 
 #include <osg/Node>
@@ -9,7 +10,6 @@
 #include <osgViewer/config/SingleWindow>
 #include <osgGA/TrackballManipulator>
 
-#include <iostream>
 #include <string>
 #include <thread>
 #include <chrono>
@@ -40,6 +40,10 @@
 
 int main(int argc, char** argv)
 {
+    // 需要显式创建并持有，以控制生命周期
+    // 初始化日志系统
+    czmosg::initializeLogger();
+
     // 创建根节点
     osg::ref_ptr<osg::Group> root = new osg::Group();
 
@@ -62,18 +66,19 @@ int main(int argc, char** argv)
     //}
 
 
-    const std::string tilesetUrl = "http://127.0.0.1:9095/models/DaYanTa_3DTiles1.0/tileset.json";
-    //const std::string tilesetUrl = "file:///D:/xrui94/data/models/DaYanTa_3DTiles1.0/tileset.json"; // 暂不支持本地模型加载
+    const std::string tilesetUrl = "http://127.0.0.1:9095/models/DaYanTa_3DTiles1.0/tileset.json";    // 支持“http://”和“https://”协议
+    //const std::string tilesetUrl = "D:/xrui94/data/models/DaYanTa_3DTiles1.0/tileset.json"; // 支持本地模型加载
+    //const std::string tilesetUrl = "file://D:/xrui94/data/models/DaYanTa_3DTiles1.0/tileset.json"; // 支持“file://”
+    //const std::string tilesetUrl = "file:///D:/xrui94/data/models/DaYanTa_3DTiles1.0/tileset.json"; // 支持“file:///”（更推荐这种规范的 file 协议）
+
     osg::ref_ptr<osg::Node> model = new Cesium3DTileset(tilesetUrl, 16.0f); // 降低maximumScreenSpaceError
-    std::cout << "Loading Cesium 3D Tiles from: " << tilesetUrl << std::endl;
 
     // 检查模型是否加载成功
     if (!model) {
-        std::cerr << "Error: Could not load model file: " << tilesetUrl << std::endl;
+        CO_CRITICAL("Error: Could not load model file: {}", tilesetUrl);
         return 1;
     }
-
-    std::cout << "Model loaded successfully: " << tilesetUrl << std::endl;
+    CO_INFO("Cesium 3DTiles Model loaded successfully: {}", tilesetUrl);
 
     // 将模型添加到场景图
     root->addChild(model);
@@ -90,7 +95,7 @@ int main(int argc, char** argv)
 
     // 参考osgEarth的实现，使用TrackballManipulator来支持交互
     viewer.setCameraManipulator(new osgGA::TrackballManipulator());
-    std::cout << "Using TrackballManipulator for interactive camera handling" << std::endl;
+    CO_TRACE("Using TrackballManipulator for interactive camera handling");
 
     viewer.setSceneData(root);
     
@@ -117,7 +122,7 @@ int main(int argc, char** argv)
             if (!homePositioned && frameCount > 10) { // 等待至少10帧以确保初始化完成
                 // 使用新的isRootTileAvailable方法检查根瓦片状态
                 if (cesiumNode->isRootTileAvailable()) {
-                    std::cout << "Root tile available, setting manual camera position to Dayan Pagoda area" << std::endl;
+                    CO_DEBUG("Root tile available, setting manual camera position to model area");
                     
                     // 检查相机操作器是否有效
                     osgGA::CameraManipulator* manipulator = viewer.getCameraManipulator();
@@ -127,14 +132,14 @@ int main(int argc, char** argv)
                         osg::Vec3d center(-1.71545e+06, 4.99352e+06, 3.56687e+06);
                         osg::Vec3d up(0.0, 0.0, 1.0);
                         
-                        std::cout << "Setting home position..." << std::endl;
+                        CO_TRACE("Setting home position...");
                         manipulator->setHomePosition(eye, center, up);
-                        std::cout << "Calling viewer.home()..." << std::endl;
+                        CO_TRACE("Calling viewer.home()...");
                         viewer.home();
                         homePositioned = true;
-                        std::cout << "Camera positioned at: (" << eye.x() << ", " << eye.y() << ", " << eye.z() << ")" << std::endl;
+                        CO_TRACE("Camera positioned at: ({}, {}, {})", eye.x(), eye.y(), eye.z());
                     } else {
-                        std::cout << "Error: Camera manipulator is null!" << std::endl;
+                        CO_ERROR("Error: Camera manipulator is null!");
                     }
                 }
             }
@@ -145,7 +150,7 @@ int main(int argc, char** argv)
             }
         }
         
-        std::cout << "Completed " << frameCount << " frames" << std::endl;
+        CO_TRACE("Completed {} frames", frameCount);
         //bool success = osgDB::writeNodeFile(*root, "filename.osg");
         //if (!success) std::cerr << "Failed to save to osg file." << std::endl;
         return 0;

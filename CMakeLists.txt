@@ -31,6 +31,7 @@ endif()
 
 # Source files
 set(CESIUM_OSG_HEADER_FILES
+	src/Log.h
     src/AsyncTaskProcessor.h
     src/SimpleAssetAccessor.h
 	src/SimpleRenderResourcesPreparer.h
@@ -42,6 +43,7 @@ set(CESIUM_OSG_SOURCE_FILES
     src/SimpleAssetAccessor.cpp
     src/SimpleRenderResourcesPreparer.cpp
 	src/Cesium3DTileset.cpp
+	src/Log.cpp
     src/main.cpp
 )
 
@@ -71,6 +73,17 @@ if(MSVC)
     #     $<$<CONFIG:Release>:NDEBUG>
     # )
 endif()
+
+# 定义通用的跨平台、跨编译器的“构建类型宏定义”
+# 通过“生成器表达式”支持 vs、xcode这种多配置生成器，
+# 也适用于 Makefile、Ninja 这种单配置生成器
+target_compile_definitions(${PROJECT_NAME}
+    PRIVATE
+	$<$<CONFIG:Debug>:CO_DEBUG_MODE>
+	$<$<CONFIG:Release>:CO_RELEASE_MODE>
+	$<$<CONFIG:MinSizeRel>:CO_MINSIZEREL_MODE>
+	$<$<CONFIG:RelWithDebInfo>:CO_RELWITHDEBINFO_MODE>
+)
 
 # 此设置会导致编译错误，即：库编译配置冲突，尤其是在使用 Cesium Native 和其依赖的 S2 Geometry 库 
 # 类似：error LNK2038: 检测到“annotate_string”的不匹配项: 值“0”不匹配值“1”
@@ -124,7 +137,7 @@ find_library(LIB_CURLd libcurld ${THIRD_PARTY_DIR}/curl/lib/Debug)
 # 查找 Release 版本的库
 find_library(LIB_CURL libcurl ${THIRD_PARTY_DIR}/curl/lib/Release)
 
-# 链接 OSG 库
+# 链接 CURL 库
 target_link_libraries(
 	${PROJECT_NAME} PRIVATE
 	debug ${LIB_CURLd} optimized ${LIB_CURL}

@@ -11,6 +11,11 @@
 #include <map>
 #include <span>
 
+// 前向声明
+namespace spdlog {
+    class logger;
+}
+
 /**
  * @brief 简单的资源访问器实现，支持HTTP和文件系统访问
  */

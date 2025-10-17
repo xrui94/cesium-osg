@@ -10,6 +10,11 @@
 #include <queue>
 #include <atomic>
 
+// 前向声明
+namespace spdlog {
+    class logger;
+}
+
 
 /**
  * A synchronous task processor that executes tasks immediately in the calling thread.
@@ -28,6 +33,8 @@ public:
     bool isSynchronous() const { return m_synchronous; }
 
 private:
+	std::shared_ptr<spdlog::logger> m_logger;
+
     std::atomic<bool> m_synchronous{true}; // Default to synchronous execution
     
     // For async mode (if needed)
