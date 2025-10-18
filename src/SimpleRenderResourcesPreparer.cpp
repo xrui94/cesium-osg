@@ -1,4 +1,5 @@
 #include "SimpleRenderResourcesPreparer.h"
+//#include "NodeBuilder.h"
 #include "Log.h"
 
 #include <CesiumGltfContent/GltfUtilities.h>
@@ -447,6 +448,7 @@ CesiumAsync::Future<Cesium3DTilesSelection::TileLoadResultAndRenderResources>
 
 	CO_TRACE("Found glTF model with {} meshes", model->meshes.size());
 
+	//czmosg::NodeBuilder builder(model, transform);
 	NodeBuilder builder(model, transform);
 	::LoadThreadResult* result = new ::LoadThreadResult;
 	result->node = builder.build();

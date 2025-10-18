@@ -4,13 +4,18 @@
 
 **注**：cesium-unreal 和 cesium-unity 分别是 cesium for ue 和 cesium for unity两个插件的官方源码
 
+![test_gltf_01.png](./screenshot/test_gltf_01.png)
+
 ![test_01.png](./screenshot/test_01.png)
 
 ## 1. 特性
 
 - 目前支持：
-  - 支持加载网络（ HTTP/HTTPS 协议） 3D Tiles 1.0 / 1.1 模型加载和渲染
+  - 支持加载本地（包括 file:/// 协议） glTF/glb 模型
+  - 支持加载网络（包括 HTTP/HTTPS 协议） glTF/glb 模型
   - 支持本地（包括 file:/// 协议） 3DTiles 1.0 / 1.1 模型加载和渲染
+  - 支持加载网络（ HTTP/HTTPS 协议） 3D Tiles 1.0 / 1.1 模型加载和渲染
+  - 支持 PBR 材质简单地映射为 OSG 中的 osg::Material（传统的 Blinn-Phong） 材质
   - 异步加载与层级细节（LOD）
   - 与 OpenSceneGraph 渲染管线无缝集成
 
@@ -60,7 +65,8 @@ cmake --build . --config Debug
 
 ## 3. 致谢
 
-cesium-osg项目收到了如下三个项目的启发：
+cesium-osg项目受到了如下三个项目的启发，并在一定程度上使用了这些项目的部分源代码：
 - [osgEarth](https://github.com/gwaldron/osgearth): 3D Maps & Terrain SDK / C++17
 - [godot-3dtiles](https://github.com/wxzen/godot-3dtiles): Godot Cesium 3D Tiles plugin
+- [vsgCs](https://github.com/timoore/vsgCs): Cesium client for VSG
 - [cesium-unreal](https://github.com/CesiumGS/cesium-unreal): Bringing the 3D geospatial ecosystem to Unreal Engine

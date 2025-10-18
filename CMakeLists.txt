@@ -32,18 +32,25 @@ endif()
 # Source files
 set(CESIUM_OSG_HEADER_FILES
 	src/Log.h
+	src/RuntimeSupport.h
+	src/AsyncSystemWrapper.h
     src/AsyncTaskProcessor.h
     src/SimpleAssetAccessor.h
 	src/SimpleRenderResourcesPreparer.h
+	src/NodeBuilder.h
+	src/GltfLoader.h
     src/Cesium3DTileset.h
 )
 
 set(CESIUM_OSG_SOURCE_FILES
+	src/Log.cpp
+	src/AsyncSystemWrapper.cpp
     src/AsyncTaskProcessor.cpp
     src/SimpleAssetAccessor.cpp
     src/SimpleRenderResourcesPreparer.cpp
+	src/NodeBuilder.cpp
+	src/GltfLoader.cpp
 	src/Cesium3DTileset.cpp
-	src/Log.cpp
     src/main.cpp
 )
 
@@ -63,6 +70,7 @@ if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE
         /W4 /WX 
         /wd4100 /wd4244 /wd4267 /wd4996 /wd4828 /wd4010
+		/wd4505  # 👈 忽略“未引用的本地函数”警告
         /utf-8
         # # 确保Debug和Release使用正确的运行时库
         # $<$<CONFIG:Debug>:/MDd>
