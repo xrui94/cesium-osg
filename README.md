@@ -11,20 +11,20 @@
 ## 1. 特性
 
 - 目前支持：
-  - 支持加载本地（包括 file:/// 协议） glTF/glb 模型
-  - 支持加载网络（包括 HTTP/HTTPS 协议） glTF/glb 模型
-  - 支持本地（包括 file:/// 协议） 3DTiles 1.0 / 1.1 模型加载和渲染
-  - 支持加载网络（ HTTP/HTTPS 协议） 3D Tiles 1.0 / 1.1 模型加载和渲染
-  - 支持 PBR 材质简单地映射为 OSG 中的 osg::Material（传统的 Blinn-Phong） 材质
-  - 异步加载与层级细节（LOD）
-  - 与 OpenSceneGraph 渲染管线无缝集成
+  - ✅ 支持加载本地（包括 file:/// 协议） glTF/glb 模型
+  - ✅ 支持加载网络（包括 HTTP/HTTPS 协议） glTF/glb 模型
+  - ✅ 支持本地（包括 file:/// 协议） 3DTiles 1.0 / 1.1 模型加载和渲染
+  - ✅ 支持加载网络（ HTTP/HTTPS 协议） 3D Tiles 1.0 / 1.1 模型加载和渲染
+  - ✅ 支持 PBR 材质简单地映射为 OSG 中的 osg::Material（传统的 Blinn-Phong） 材质
+  - ✅ 异步加载与层级细节（LOD）
+  - ✅ 与 OpenSceneGraph 渲染管线无缝集成
 
 - TODO:
-  - 支持 Cesium quantized-mesh 地形数据的加载和渲染
-  - 基于 WGS84 的精确地理投影
-  - 支持 WMTS 影像服务数据的加载和渲染
-  - 日志系统部分日志不输出
-  - 内存使用过多
+  - [ ] 支持 Cesium quantized-mesh 地形数据的加载和渲染
+  - [ ] 基于 WGS84 的精确地理投影
+  - [ ] 支持 WMTS 影像服务数据的加载和渲染
+  - [ ] 日志系统部分日志不输出
+  - [ ] 内存使用过多
 
 ## 2. 入门
 
